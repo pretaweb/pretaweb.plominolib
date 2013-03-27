@@ -33,10 +33,15 @@ def decode(secret_key, urlsafe_string, timeout):
     Return tuple of email address and true if it is validate
     """
     now = time.time()
-    ticket = base64.urlsafe_b64decode(urlsafe_string)
-    (digest, email, tokens, user_data, timestamp) = tktauth.splitTicket(ticket)
-    is_validate = tktauth.validateTicket(secret_key, ticket, timeout=timeout,
-                                         now=now)
+    try:
+        ticket = base64.urlsafe_b64decode(urlsafe_string)
+        (digest, email, tokens, user_data, timestamp) = tktauth.splitTicket(
+            ticket)
+        is_validate = tktauth.validateTicket(secret_key, ticket,
+                                             timeout=timeout, now=now)
+    except (ValueError, TypeError) as e:
+        email = None
+        is_validate = None
     return email, is_validate is not None
 
 
