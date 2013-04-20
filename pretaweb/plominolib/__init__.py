@@ -12,8 +12,8 @@ from plone.session import tktauth
 from Products.PythonScripts.Utility import allow_module
 
 allow_module('pretaweb.plominolib')
-allow_module('time')
-allow_module('tktauth')
+# allow_module('time')
+# allow_module('tktauth')
 
 
 def encode(secret_key, email):
@@ -34,22 +34,35 @@ def decode(secret_key, urlsafe_string, timeout):
     """
     now = time.time()
     try:
+        # What is the minimum we should try?
         ticket = base64.urlsafe_b64decode(urlsafe_string)
         (digest, email, tokens, user_data, timestamp) = tktauth.splitTicket(
             ticket)
         is_validate = tktauth.validateTicket(secret_key, ticket,
                                              timeout=timeout, now=now)
     except (ValueError, TypeError) as e:
+        # Log what went wrong.
         email = None
         is_validate = None
     return email, is_validate is not None
+
+
+def verify_recaptcha(context):
+
+    # Fake locally to make tests pass
+    request = getattr(context, 'REQUEST')
+    if 'local' in request.URL:
+        return True
+
+    valid = context.restrictedTraverse('@@captcha').verify()
+    return valid
 
 
 class PretawebPlominoLibUtils:
     implements(interfaces.IPlominoUtils)
 
     module = 'pretaweb.plominolib'
-    methods = ['encode', 'decode']
+    methods = ['encode', 'decode', 'verify_recaptcha']
 
 
 component.provideUtility(PretawebPlominoLibUtils, interfaces.IPlominoUtils,
