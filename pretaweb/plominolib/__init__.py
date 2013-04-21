@@ -51,7 +51,7 @@ def verify_recaptcha(context):
 
     # Fake locally to make tests pass
     request = getattr(context, 'REQUEST')
-    if 'local' in request.URL:
+    if 'localhost' in request.BASE1:
         return True
 
     valid = context.restrictedTraverse('@@captcha').verify()
