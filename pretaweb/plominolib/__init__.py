@@ -33,6 +33,10 @@ def decode(secret_key, urlsafe_string, timeout):
     Return tuple of email address and true if it is validate
     """
     now = time.time()
+    if not hasattr(urlsafe_string, 'translate'):
+        # IE8 passes the key twice in the request
+        if hasattr(urlsafe_string[0], 'translate'):
+            urlsafe_string = urlsafe_string[0]
     try:
         # What is the minimum we should try?
         ticket = base64.urlsafe_b64decode(urlsafe_string)
