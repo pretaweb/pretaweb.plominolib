@@ -95,7 +95,7 @@ class PretawebPlominoLibUtils:
     implements(interfaces.IPlominoUtils)
 
     module = 'pretaweb.plominolib'
-    methods = ['encode', 'decode', 'verify_recaptcha', 'queue_async']
+    methods = ['encode', 'decode', 'verify_recaptcha']
 
 
 component.provideUtility(PretawebPlominoLibUtils, interfaces.IPlominoUtils,
