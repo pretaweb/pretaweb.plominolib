@@ -4,7 +4,7 @@ Make tkt auth from Plone Session available to PlominoUtils.
 from zope import component
 from Products.CMFPlomino import interfaces
 from zope.interface import implements
-
+from AccessControl import ModuleSecurityInfo
 import time
 import base64
 from plone.session import tktauth
@@ -62,11 +62,27 @@ def verify_recaptcha(context):
     return valid
 
 
+
+#from zope.component import getUtility
+#from plone.app.async.interfaces import IAsyncService
+#def queue_async(context, func, *args):
+#
+#    async = getUtility(IAsyncService)
+#    queue = async.getQueues()['']
+#    return async.queueJob(func, context, *args)
+#ModuleSecurityInfo("pretaweb.plominolib").declarePublic("queue_async")
+
+
+#from collective.taskqueue import taskqueue
+
+ModuleSecurityInfo("collective.taskqueue.taskqueue").declarePublic("add")
+
+
 class PretawebPlominoLibUtils:
     implements(interfaces.IPlominoUtils)
 
     module = 'pretaweb.plominolib'
-    methods = ['encode', 'decode', 'verify_recaptcha']
+    methods = ['encode', 'decode', 'verify_recaptcha', 'queue_async']
 
 
 component.provideUtility(PretawebPlominoLibUtils, interfaces.IPlominoUtils,
