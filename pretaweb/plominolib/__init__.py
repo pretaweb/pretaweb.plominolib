@@ -141,5 +141,7 @@ ModuleSecurityInfo('zipfile').declarePublic('ZIP64_LIMIT',
                                              'ZipInfo')
 allow_class(ZipInfo)
 
+ModuleSecurityInfo("transaction").declarePublic("savepoint")
+
 def initialize(context):
     """Initializer called when used as a Zope 2 product."""
