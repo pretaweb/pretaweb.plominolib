@@ -142,6 +142,10 @@ ModuleSecurityInfo('zipfile').declarePublic('ZIP64_LIMIT',
 allow_class(ZipInfo)
 
 ModuleSecurityInfo("transaction").declarePublic("savepoint")
+ModuleSecurityInfo("email").declarePublic("message")
+ModuleSecurityInfo("email").declarePublic("message_from_string")
+from email.message import Message
+allow_class(Message)
 
 def initialize(context):
     """Initializer called when used as a Zope 2 product."""
