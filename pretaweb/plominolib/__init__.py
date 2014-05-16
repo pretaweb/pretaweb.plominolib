@@ -165,5 +165,25 @@ ModuleSecurityInfo("email").declarePublic("message_from_string")
 from email.message import Message
 allow_class(Message)
 
+
+#Catalog operations
+
+def get_catalog_histogram(catalog, indexid):
+    """ return the histogram for a given named index
+    """
+    indexes = catalog.getIndexObjects()
+    counts = None
+    index_ids = []
+    for index in indexes:
+        index_ids.append(index.getId())
+        if index.getId() == indexid:
+            counts = index.uniqueValues(withLengths=True)
+            break
+    if counts is None:
+        raise Exception("index %s not found in %s" % (indexid, index_ids) )
+    return counts
+
+ModuleSecurityInfo("pretaweb.plominolib").declarePublic("get_catalog_histogram")
+
 def initialize(context):
     """Initializer called when used as a Zope 2 product."""
