@@ -91,11 +91,29 @@ def verify_recaptcha(context):
 ModuleSecurityInfo("collective.taskqueue.taskqueue").declarePublic("add")
 
 
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+def email_mime_string(email_from_address, email_to_address, email_subject, email_reply_to_address, email_body_html, email_text_attachment, email_text_attachment_filename):
+    message_body = MIMEText(email_body_html, "html")
+
+    attachment = MIMEText(email_text_attachment)
+    attachment.add_header('Content-Disposition', 'attachment', filename=email_text_attachment_filename)
+
+    message = MIMEMultipart()
+    message.add_header('From', email_from_address)
+    message.add_header('To', email_to_address)
+    message.add_header('Subject', email_subject)
+    message.add_header('Reply-To', email_reply_to_address)
+    message.attach(message_body)
+    message.attach(attachment)
+    return message.as_string()
+
+
 class PretawebPlominoLibUtils:
     implements(interfaces.IPlominoUtils)
 
     module = 'pretaweb.plominolib'
-    methods = ['encode', 'decode', 'verify_recaptcha']
+    methods = ['encode', 'decode', 'verify_recaptcha', 'email_mime_string']
 
 
 component.provideUtility(PretawebPlominoLibUtils, interfaces.IPlominoUtils,
