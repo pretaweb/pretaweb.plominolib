@@ -160,6 +160,8 @@ ModuleSecurityInfo('zipfile').declarePublic('ZIP64_LIMIT',
 allow_class(ZipInfo)
 
 ModuleSecurityInfo("re").declarePublic("match")
+ModuleSecurityInfo("re").declarePublic("MatchObject")
+ModuleSecurityInfo("MatchObject").declarePublic("groupdict")
 ModuleSecurityInfo("transaction").declarePublic("savepoint")
 ModuleSecurityInfo("email").declarePublic("message")
 ModuleSecurityInfo("email").declarePublic("message_from_string")
