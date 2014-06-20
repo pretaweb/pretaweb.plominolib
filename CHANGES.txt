@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.1dev1 (2014-06-20)
+--------------------
+
+- Add get_random_key function
+  [Ivan Teoh]
+
 0.1dev0 (2013-03-26)
 --------------------
 

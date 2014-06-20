@@ -10,6 +10,8 @@ import time
 import base64
 from plone.session import tktauth
 from zipfile import ZipFile as _ZipFile, ZIP_STORED, ZipInfo
+import random
+import string
 
 from Products.PythonScripts.Utility import allow_module
 
@@ -184,6 +186,17 @@ def get_catalog_histogram(catalog, indexid):
     return counts
 
 ModuleSecurityInfo("pretaweb.plominolib").declarePublic("get_catalog_histogram")
+
+def get_random_key(length=50):
+    """ return random alphanumeric characters key with given length.
+        default length is 50
+    """
+    key = ''.join([
+        random.choice(string.ascii_letters + string.digits)
+        for i in range(length)])
+    return key
+
+ModuleSecurityInfo("pretaweb.plominolib").declarePublic("get_random_key")
 
 def initialize(context):
     """Initializer called when used as a Zope 2 product."""
