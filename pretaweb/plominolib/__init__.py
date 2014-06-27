@@ -161,7 +161,21 @@ ModuleSecurityInfo('zipfile').declarePublic('ZIP64_LIMIT',
                                              'ZipInfo')
 allow_class(ZipInfo)
 
+# transaction operations
+
+import transaction
+def transaction_get():
+    return transaction.get()
+
+def transaction_commit(txn):
+    txn.commit()
+    return
+
 ModuleSecurityInfo("transaction").declarePublic("savepoint")
+ModuleSecurityInfo("pretaweb.plominolib").declarePublic("transaction_get", "transaction_commit")
+
+# email message operations
+
 ModuleSecurityInfo("email").declarePublic("message")
 ModuleSecurityInfo("email").declarePublic("message_from_string")
 from email.message import Message
