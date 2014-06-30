@@ -23,13 +23,15 @@ allow_module('pretaweb.plominolib')
 allow_module('csv')
 # ModuleSecurityInfo('nntplib').declarePublic('NNTP',
 #   'error_reply', 'error_temp', 'error_perm', 'error_proto')
-from csv import DictReader, DictWriter, Dialect, excel, excel_tab, Sniffer
+from csv import DictReader, DictWriter, Dialect, excel, excel_tab, Sniffer, reader, writer
 allow_class(DictReader)
 allow_class(DictWriter)
 allow_class(Dialect)
 allow_class(excel)
 allow_class(excel_tab)
 allow_class(Sniffer)
+allow_class(reader)
+allow_class(writer)
 
 def encode(secret_key, email):
     """
