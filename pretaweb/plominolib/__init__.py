@@ -30,8 +30,8 @@ allow_class(Dialect)
 allow_class(excel)
 allow_class(excel_tab)
 allow_class(Sniffer)
-allow_class(reader)
-allow_class(writer)
+ModuleSecurityInfo("csv").declarePublic("reader")
+ModuleSecurityInfo("csv").declarePublic("writer")
 
 def encode(secret_key, email):
     """
