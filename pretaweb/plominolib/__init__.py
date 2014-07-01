@@ -167,12 +167,16 @@ import transaction
 def transaction_get():
     return transaction.get()
 
+def transaction_savepoint(txn, optimistic=True):
+    txn.savepoint(optimistic=optimistic)
+    return
+
 def transaction_commit(txn):
     txn.commit()
     return
 
 ModuleSecurityInfo("transaction").declarePublic("savepoint")
-ModuleSecurityInfo("pretaweb.plominolib").declarePublic("transaction_get", "transaction_commit")
+ModuleSecurityInfo("pretaweb.plominolib").declarePublic("transaction_get", "transaction_commit", "transaction_savepoint")
 
 # email message operations
 
