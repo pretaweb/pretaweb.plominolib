@@ -263,11 +263,14 @@ def compare(a, b):
         b = b.decode('utf-8')
     return cmp(a.lower(), b.lower())
 
-def get_vocabulary(name=""):
+def get_vocabulary(name="", context=None):
     portal = getSite()
     if name:
         factory = component.getUtility(IVocabularyFactory, name)
-        vocabulary = factory(portal)
+        if context:
+            vocabulary = factory(context)
+        else:
+            vocabulary = factory(portal)
         return ["%s|%s" % (term.title, term.value) for term in vocabulary]
 
     res = []
