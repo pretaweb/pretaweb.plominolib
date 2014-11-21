@@ -2,18 +2,39 @@
 Make tkt auth from Plone Session available to PlominoUtils.
 """
 from AccessControl import allow_class, ModuleSecurityInfo
+from Acquisition import aq_inner
+from Products.Archetypes.utils import shasattr
+from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
 from zope import component
-from Products.CMFPlomino import interfaces
+from Products.CMFPlomino import interfaces as plomino_interfaces
 from zope.interface import implements
-from AccessControl import ModuleSecurityInfo
+from Products.CMFCore.utils import getToolByName
 import time
 import base64
 from plone.session import tktauth
 from zipfile import ZipFile as _ZipFile, ZIP_STORED, ZipInfo
 import random
 import string
+import operator
+
+try:
+    # Don't blame me, blame #pyflakes
+    from zope.schema import interfaces
+    IVocabularyFactory = interfaces.IVocabularyFactory
+except ImportError:
+    # < Zope 2.10
+    from zope.app.schema import vocabulary
+    IVocabularyFactory = vocabulary.IVocabularyFactory
+
+try:
+    from zope.app.component.hooks import getSite
+except ImportError:
+    from zope.component.hooks import getSite
 
 from Products.PythonScripts.Utility import allow_module
+
+import logging
+logger = logging.getLogger('pretaweb.plominolib')
 
 allow_module('pretaweb.plominolib')
 # allow_module('time')
@@ -23,13 +44,13 @@ allow_module('pretaweb.plominolib')
 allow_module('csv')
 # ModuleSecurityInfo('nntplib').declarePublic('NNTP',
 #   'error_reply', 'error_temp', 'error_perm', 'error_proto')
-from csv import DictReader, DictWriter, Dialect, excel, excel_tab, Sniffer
-allow_class(DictReader)
-allow_class(DictWriter)
-allow_class(Dialect)
-allow_class(excel)
-allow_class(excel_tab)
-allow_class(Sniffer)
+import csv
+allow_class(csv.DictReader)
+allow_class(csv.DictWriter)
+allow_class(csv.Dialect)
+allow_class(csv.excel)
+allow_class(csv.excel_tab)
+allow_class(csv.Sniffer)
 
 def encode(secret_key, email):
     """
@@ -112,13 +133,13 @@ def email_mime_string(email_from_address, email_to_address, email_subject, email
 
 
 class PretawebPlominoLibUtils:
-    implements(interfaces.IPlominoUtils)
+    implements(plomino_interfaces.IPlominoUtils)
 
     module = 'pretaweb.plominolib'
     methods = ['encode', 'decode', 'verify_recaptcha', 'email_mime_string']
 
 
-component.provideUtility(PretawebPlominoLibUtils, interfaces.IPlominoUtils,
+component.provideUtility(PretawebPlominoLibUtils, plomino_interfaces.IPlominoUtils,
                          name='pretaweb.plominolib')
 
 
@@ -215,6 +236,58 @@ def get_random_key(length=50):
     return key
 
 ModuleSecurityInfo("pretaweb.plominolib").declarePublic("get_random_key")
+
+def csv_reader(csvfile, **kwds):
+    """ using csv.reader and return array of rows
+    """
+    rows = []
+    spamreader = csv.reader(csvfile, kwds)
+    for row in spamreader:
+        rows.append(row)
+    return rows
+
+def csv_dict_reader(csvfile, **kwds):
+    """ using csv.reader and return array of rows
+    """
+    rows = []
+    spamreader = csv.DictReader(csvfile, kwds)
+    for row in spamreader:
+        rows.append(row)
+    return rows
+
+def compare(a, b):
+    """ Compare lower values """
+    if not isinstance(a, unicode):
+        a = a.decode('utf-8')
+    if not isinstance(b, unicode):
+        b = b.decode('utf-8')
+    return cmp(a.lower(), b.lower())
+
+def get_vocabulary(name=""):
+    portal = getSite()
+    if name:
+        factory = component.getUtility(IVocabularyFactory, name)
+        vocabulary = factory(portal)
+        return ["%s|%s" % (term.title, term.value) for term in vocabulary]
+
+    res = []
+    vtool = getToolByName(portal, 'portal_vocabularies', None)
+    if vtool:
+        vocabularies = vtool.objectValues()
+        res.extend([(term.getId(), term.title_or_id()) for term in vocabularies])
+    atvocabulary_ids = [elem[0] for elem in res]
+    
+    factories = component.getUtilitiesFor(IVocabularyFactory)
+    res.extend([(factory[0], factory[0]) for factory in factories if factory[0] not in atvocabulary_ids])
+    
+    res.sort(key=operator.itemgetter(1), cmp=compare)
+    # play nice with collective.solr I18NFacetTitlesVocabularyFactory
+    # and probably others
+    #if len(res) and res[0] != ('', ''):
+    #    res.insert(0, ('', ''))
+    #items = [SimpleVocabulary.createTerm(key, key, value) for key, value in res]
+    #vocabulary = SimpleVocabulary(items)
+    return ["%s|%s" % (key, value) for key, value in res if key]
 
 def initialize(context):
     """Initializer called when used as a Zope 2 product."""
