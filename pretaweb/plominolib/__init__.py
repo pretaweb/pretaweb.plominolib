@@ -273,6 +273,7 @@ def get_vocabulary(name="", context=None):
             vocabulary = factory(portal)
         return ["%s|%s" % (term.title, term.value) for term in vocabulary]
 
+    # borrow some codes from eea.facetednavigation
     res = []
     vtool = getToolByName(portal, 'portal_vocabularies', None)
     if vtool:
