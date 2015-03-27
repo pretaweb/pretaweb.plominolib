@@ -52,6 +52,18 @@ allow_class(csv.excel)
 allow_class(csv.excel_tab)
 allow_class(csv.Sniffer)
 
+# Allow RE in restricted python. Based on collective.localfunctions
+# by Steve McMahon
+from AccessControl import allow_type
+import re
+allow_module('re')
+ModuleSecurityInfo('re').declarePublic(
+    'compile', 'findall', 'match', 'search', 'split', 'sub', 'subn', 'error',
+    'I', 'L', 'M', 'S', 'X')
+allow_type(type(re.compile('')))
+allow_type(type(re.match('x', 'x')))
+
+
 def encode(secret_key, email):
     """
     Encode email with secret key and current timestamp
