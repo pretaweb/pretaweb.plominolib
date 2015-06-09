@@ -144,9 +144,24 @@ allow_class(ZipInfo)
 ModuleSecurityInfo("transaction").declarePublic("savepoint")
 ModuleSecurityInfo("email").declarePublic("message")
 ModuleSecurityInfo("email").declarePublic("message_from_string")
+ModuleSecurityInfo("email").declarePublic("mime")
+ModuleSecurityInfo("email.mine").declarePublic("image")
+allow_module("email.mine")
+allow_module("email.mine.image")
+allow_module("email.mime.multipart")
+from email.mime.image import MIMEImage
+allow_class(MIMEImage)
+from email.mime.multipart import MIMEMultipart
+allow_class(MIMEMultipart)
+from email.mime.application import MIMEApplication
+allow_class(MIMEApplication)
+
+import email
+
 from email.message import Message
 allow_class(Message)
 
+allow_module("plone.subrequest")
 
 #Catalog operations
 
