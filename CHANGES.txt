@@ -1,13 +1,7 @@
 Changelog
 =========
 
-0.3 (Unreleased)
---------------------
-
-- Add urlunquote, urlquote_plus and urlunquote_plus functions
-  [ivanteoh]
-
-0.2 (2015-06-09)
+0.2 (Unreleased)
 --------------------
 
 - Add get_vocabulary function

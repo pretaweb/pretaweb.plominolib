@@ -307,10 +307,10 @@ def get_vocabulary(name="", context=None):
         vocabularies = vtool.objectValues()
         res.extend([(term.getId(), term.title_or_id()) for term in vocabularies])
     atvocabulary_ids = [elem[0] for elem in res]
-
+    
     factories = component.getUtilitiesFor(IVocabularyFactory)
     res.extend([(factory[0], factory[0]) for factory in factories if factory[0] not in atvocabulary_ids])
-
+    
     res.sort(key=operator.itemgetter(1), cmp=compare)
     # play nice with collective.solr I18NFacetTitlesVocabularyFactory
     # and probably others
@@ -319,22 +319,6 @@ def get_vocabulary(name="", context=None):
     #items = [SimpleVocabulary.createTerm(key, key, value) for key, value in res]
     #vocabulary = SimpleVocabulary(items)
     return ["%s|%s" % (key, value) for key, value in res if key]
-
-def urlunquote(s,):
-    """Call urllib.unquote."""
-    return urllib.unquote(s)
-
-def urlquote_plus(s, safe=""):
-    """Call urllib.quote_plus."""
-    return urllib.quote_plus(s, safe)
-
-def urlunquote_plus(s):
-    """Call urllib.unquote_plus."""
-    return urllib.unquote_plus(s)
-
-ModuleSecurityInfo("pretaweb.plominolib").declarePublic("urlunquote")
-ModuleSecurityInfo("pretaweb.plominolib").declarePublic("urlquote_plus")
-ModuleSecurityInfo("pretaweb.plominolib").declarePublic("urlunquote_plus")
 
 def initialize(context):
     """Initializer called when used as a Zope 2 product."""
