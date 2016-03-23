@@ -63,6 +63,21 @@ ModuleSecurityInfo('re').declarePublic(
 allow_type(type(re.compile('')))
 allow_type(type(re.match('x', 'x')))
 
+# Allow Soap clients via suds
+try:
+    allow_module('suds')
+    allow_module('suds.client')
+    from suds.client import Client
+    allow_class(Client)
+
+    from suds import WebFault
+    allow_class(WebFault)
+
+    from suds import MethodNotFound
+    allow_class(MethodNotFound)
+except ImportError:
+    pass
+
 
 def encode(secret_key, email):
     """
