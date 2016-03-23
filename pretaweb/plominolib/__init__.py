@@ -70,6 +70,12 @@ try:
     from suds.client import Client
     allow_class(Client)
 
+    from suds.client import ServiceSelector
+    allow_class(ServiceSelector)
+
+    # Without this, RestrictedPython fails when trying to find a Method
+    ServiceSelector.__parent__ = lambda x: None
+
     from suds import WebFault
     allow_class(WebFault)
 
