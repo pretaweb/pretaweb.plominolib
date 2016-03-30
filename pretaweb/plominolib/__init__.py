@@ -85,6 +85,15 @@ except ImportError:
     pass
 
 
+allow_module('plone.protect.interfaces')
+from plone.protect.interfaces import IDisableCSRFProtection
+allow_class(IDisableCSRFProtection)
+
+allow_module('zope.interface')
+from zope.interface import alsoProvides
+allow_class(alsoProvides)
+
+
 def encode(secret_key, email):
     """
     Encode email with secret key and current timestamp
