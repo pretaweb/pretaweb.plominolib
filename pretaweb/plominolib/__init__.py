@@ -40,6 +40,10 @@ allow_module('pretaweb.plominolib')
 allow_module('time')
 # allow_module('tktauth')
 
+import urllib
+allow_module('urllib')
+ModuleSecurityInfo('urllib').declarePublic('quote')
+
 #Uses files but doesn't open them. need to double check
 allow_module('csv')
 # ModuleSecurityInfo('nntplib').declarePublic('NNTP',
