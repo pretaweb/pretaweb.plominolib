@@ -37,7 +37,7 @@ import logging
 logger = logging.getLogger('pretaweb.plominolib')
 
 allow_module('pretaweb.plominolib')
-# allow_module('time')
+allow_module('time')
 # allow_module('tktauth')
 
 #Uses files but doesn't open them. need to double check
