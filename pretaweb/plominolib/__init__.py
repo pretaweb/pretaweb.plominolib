@@ -262,6 +262,11 @@ import email
 from email.message import Message
 allow_class(Message)
 
+ModuleSecurityInfo("email").declarePublic("Utils")
+ModuleSecurityInfo("email.Utils").declarePublic('formatdate')
+from email.Utils import formatdate
+allow_class(formatdate)
+
 allow_module("plone.subrequest")
 
 #Catalog operations
