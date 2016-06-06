@@ -4,6 +4,10 @@ Make tkt auth from Plone Session available to PlominoUtils.
 from AccessControl import allow_class, ModuleSecurityInfo
 from Acquisition import aq_inner
 from Products.Archetypes.utils import shasattr
+from lxml import etree
+from plone.transformchain.interfaces import ITransform
+from zope.component import getAdapters
+from zope.globalrequest import getRequest
 from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
 from zope import component
 from Products.CMFPlomino import interfaces as plomino_interfaces
@@ -233,6 +237,7 @@ from email.message import Message
 allow_class(Message)
 
 allow_module("plone.subrequest")
+ModuleSecurityInfo("plone.subrequest").declarePublic("subrequest")
 
 #Catalog operations
 
@@ -323,9 +328,51 @@ def get_vocabulary(name="", context=None):
 def initialize(context):
     """Initializer called when used as a Zope 2 product."""
 
-def content2xml(content_string):
-    """Convert html string to xml string."""
-    result = '<?xml version="1.0" encoding="utf-8" ?><plominodatabase id="dischargedb"><document id="4376cd1663274b4bbcba61573ecebd6e" lastmodified="2016-06-02"><params><param><value><struct><member><name>wardName</name><value><string>other</string></value></member></struct></value></param></params></document></plominodatabase>'
-    return result
 
-ModuleSecurityInfo("pretaweb.plominolib").declarePublic("content2xml")
+import plone.subrequest
+from plone import api
+
+
+
+def apply_diazo(html, as_xml=False):
+    request = getRequest()
+    portal = api.portal.get()
+    charset = portal.portal_properties.site_properties.default_charset
+    new_html = None
+    published = request.get('PUBLISHED', None)
+    handlers = [v[1] for v in getAdapters((published, request,), ITransform)]
+    handlers.sort(lambda a, b: cmp(a.order, b.order))
+    if handlers:
+        # The first handler is the diazo transform, the other 4 handlers are caching
+        theme_handler = handlers[0]
+        new_html = theme_handler.transformIterable([html], charset)
+    # If the theme is not enabled, transform returns None
+    if new_html is not None:
+        if as_xml:
+            new_html.tree = etree.ElementTree(new_html.tree.xpath('/html/body/*')[0])
+            new_html.doctype = '<?xml version="1.0" standalone="yes" ?>'
+        new_html = new_html.serialize()
+    else:
+        new_html = html
+    return new_html
+
+
+ModuleSecurityInfo("pretaweb.plominolib").declarePublic("apply_diazo")
+
+from DateTime import DateTime
+
+def download(request, content, filename="file.html", content_type="text/html"):
+    """ handle setting the right headers to return an alternative download result
+    """
+
+    request.response.setHeader("Content-Disposition",
+                                       "attachment; filename=%s" %
+                                       filename)
+    request.response.setHeader("Content-Type", content_type)
+    request.response.setHeader("Content-Length", len(content))
+    request.response.setHeader('Last-Modified', DateTime.rfc822(DateTime()))
+    request.response.setHeader("Cache-Control", "no-store")
+    request.response.setHeader("Pragma", "no-cache")
+    request.response.write(content)
+
+ModuleSecurityInfo("pretaweb.plominolib").declarePublic("download")
