@@ -307,10 +307,10 @@ def get_vocabulary(name="", context=None):
         vocabularies = vtool.objectValues()
         res.extend([(term.getId(), term.title_or_id()) for term in vocabularies])
     atvocabulary_ids = [elem[0] for elem in res]
-    
+
     factories = component.getUtilitiesFor(IVocabularyFactory)
     res.extend([(factory[0], factory[0]) for factory in factories if factory[0] not in atvocabulary_ids])
-    
+
     res.sort(key=operator.itemgetter(1), cmp=compare)
     # play nice with collective.solr I18NFacetTitlesVocabularyFactory
     # and probably others
@@ -322,3 +322,10 @@ def get_vocabulary(name="", context=None):
 
 def initialize(context):
     """Initializer called when used as a Zope 2 product."""
+
+def content2xml(content_string):
+    """Convert html string to xml string."""
+    result = '<?xml version="1.0" encoding="utf-8" ?><plominodatabase id="dischargedb"><document id="4376cd1663274b4bbcba61573ecebd6e" lastmodified="2016-06-02"><params><param><value><struct><member><name>wardName</name><value><string>other</string></value></member></struct></value></param></params></document></plominodatabase>'
+    return result
+
+ModuleSecurityInfo("pretaweb.plominolib").declarePublic("content2xml")
