@@ -328,10 +328,7 @@ def get_vocabulary(name="", context=None):
 def initialize(context):
     """Initializer called when used as a Zope 2 product."""
 
-
-import plone.subrequest
 from plone import api
-
 
 
 def apply_diazo(html, as_xml=False):
@@ -343,13 +340,15 @@ def apply_diazo(html, as_xml=False):
     handlers = [v[1] for v in getAdapters((published, request,), ITransform)]
     handlers.sort(lambda a, b: cmp(a.order, b.order))
     if handlers:
-        # The first handler is the diazo transform, the other 4 handlers are caching
+        # The first handler is the diazo transform,
+        # the other 4 handlers are caching
         theme_handler = handlers[0]
         new_html = theme_handler.transformIterable([html], charset)
     # If the theme is not enabled, transform returns None
     if new_html is not None:
         if as_xml:
-            new_html.tree = etree.ElementTree(new_html.tree.xpath('/html/body/*')[0])
+            new_html.tree = etree.ElementTree(
+                new_html.tree.xpath('/html/body/*')[0])
             new_html.doctype = '<?xml version="1.0" standalone="yes" ?>'
         new_html = new_html.serialize()
     else:
@@ -361,13 +360,14 @@ ModuleSecurityInfo("pretaweb.plominolib").declarePublic("apply_diazo")
 
 from DateTime import DateTime
 
+
 def download(request, content, filename="file.html", content_type="text/html"):
     """ handle setting the right headers to return an alternative download result
     """
 
     request.response.setHeader("Content-Disposition",
-                                       "attachment; filename=%s" %
-                                       filename)
+                               "attachment; filename=%s" %
+                               filename)
     request.response.setHeader("Content-Type", content_type)
     request.response.setHeader("Content-Length", len(content))
     request.response.setHeader('Last-Modified', DateTime.rfc822(DateTime()))
