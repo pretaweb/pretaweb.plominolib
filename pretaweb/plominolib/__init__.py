@@ -389,11 +389,13 @@ def fetch_resources(uri, rel):
     return data_uri
 
 
-def apply_diazo(html, content_type="html"):
+def apply_diazo(html, content_type="html", content_path=""):
     request = getRequest()
     portal = api.portal.get()
     charset = portal.portal_properties.site_properties.default_charset
     new_html = None
+    if not content_path:
+        content_path = portal.absolute_url()
     published = request.get('PUBLISHED', None)
     handlers = [v[1] for v in getAdapters((published, request,), ITransform)]
     handlers.sort(lambda a, b: cmp(a.order, b.order))
@@ -418,7 +420,7 @@ def apply_diazo(html, content_type="html"):
         pisaDocument(
             new_html,
             pdf,
-
+            path=content_path,
             raise_exception=True,
             link_callback=fetch_resources)
         # pisadoc = pisaDocument(html, pdf, raise_exception=True)
