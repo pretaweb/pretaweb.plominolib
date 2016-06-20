@@ -29,6 +29,16 @@ allow_class(excel)
 allow_class(excel_tab)
 allow_class(Sniffer)
 
+import AccessControl
+# So info from dexterity types can be used in listing views
+from plone.app.textfield.value import RichTextValue
+allow_class(RichTextValue)
+AccessControl.ModuleSecurityInfo('RichTextValue').declarePublic('output')
+
+from plone.namedfile.file import NamedBlobFile
+allow_class(NamedBlobFile)
+AccessControl.ModuleSecurityInfo('NamedBlobFile').declarePublic('size')
+
 def encode(secret_key, email):
     """
     Encode email with secret key and current timestamp
