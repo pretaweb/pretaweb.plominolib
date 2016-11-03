@@ -320,15 +320,5 @@ def get_vocabulary(name="", context=None):
     #vocabulary = SimpleVocabulary(items)
     return ["%s|%s" % (key, value) for key, value in res if key]
 
-# White list pystache
-try:
-    import pystache
-except ImportError:
-    pystache = None
-
-if pystache is not None:
-    allow_module('pystache')
-    ModuleSecurityInfo('pystache').declarePublic('render')
-
 def initialize(context):
     """Initializer called when used as a Zope 2 product."""
