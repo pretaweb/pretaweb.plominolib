@@ -328,7 +328,7 @@ except ImportError:
 
 if pystache is not None:
     allow_module('pystache')
-    ModuleSecurityInfo('pystache').declarePublic('render')
+    ModuleSecurityInfo('pystache').declarePublic('render', 'parse')
 # End: White list pystache
 
 def initialize(context):
