@@ -331,5 +331,28 @@ if pystache is not None:
     ModuleSecurityInfo('pystache').declarePublic('render', 'parse')
 # End: White list pystache
 
+# Begin: White list uuid
+try:
+    import uuid
+except ImportError:
+    uuid = None
+
+if uuid is not None:
+    allow_module('uuid')
+    ModuleSecurityInfo('uuid').declarePublic('uuid4')
+# End: White list uuid
+
+# Begin: White list uuid
+try:
+    import random
+except ImportError:
+    random = None
+
+if random is not None:
+    allow_module('random')
+    allow_class(random.SystemRandom)
+# End: White list uuid
+
+
 def initialize(context):
     """Initializer called when used as a Zope 2 product."""
