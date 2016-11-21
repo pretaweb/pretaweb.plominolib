@@ -144,11 +144,38 @@ def email_mime_string(email_from_address, email_to_address, email_subject, email
     return message.as_string()
 
 
+def mime_message(msg_from,
+                 msg_to,
+                 msg_subject,
+                 body_text=None,
+                 attachment=None,
+                 attachment_filename=None):
+    msg = MIMEMultipart()
+    msg.add_header('From', msg_from)
+    msg.add_header('To', msg_to)
+    msg.add_header('Subject', msg_subject)
+
+    if body_text is not None:
+        message_body = MIMEText(body_text, 'plain')
+        msg.attach(message_body)
+
+    if attachment is not None:
+        attach = MIMEBase('application', 'octet-stream')
+        attach.set_payload(attachment)
+        Encoders.encode_base64(attach)
+        inline = 'inline'
+        if attachment_filename is not None:
+            inline = 'inline; filename=%s' % attachment_filename
+        attach.add_header('Content-Disposition', inline)
+        msg.attach(attach)
+    return msg
+
+
 class PretawebPlominoLibUtils:
     implements(plomino_interfaces.IPlominoUtils)
 
     module = 'pretaweb.plominolib'
-    methods = ['encode', 'decode', 'verify_recaptcha', 'email_mime_string']
+    methods = ['encode', 'decode', 'verify_recaptcha', 'email_mime_string', 'mime_message']
 
 
 component.provideUtility(PretawebPlominoLibUtils, plomino_interfaces.IPlominoUtils,
@@ -307,10 +334,10 @@ def get_vocabulary(name="", context=None):
         vocabularies = vtool.objectValues()
         res.extend([(term.getId(), term.title_or_id()) for term in vocabularies])
     atvocabulary_ids = [elem[0] for elem in res]
-    
+
     factories = component.getUtilitiesFor(IVocabularyFactory)
     res.extend([(factory[0], factory[0]) for factory in factories if factory[0] not in atvocabulary_ids])
-    
+
     res.sort(key=operator.itemgetter(1), cmp=compare)
     # play nice with collective.solr I18NFacetTitlesVocabularyFactory
     # and probably others
