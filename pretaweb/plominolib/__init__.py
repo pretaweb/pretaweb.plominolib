@@ -349,8 +349,3 @@ def get_vocabulary(name="", context=None):
 
 def initialize(context):
     """Initializer called when used as a Zope 2 product."""
-
-def set_member_properties(member, properties):
-    member.setMemberProperties(mapping=properties)
-
-ModuleSecurityInfo("pretaweb.plominolib").declarePublic("set_member_properties")
