@@ -195,5 +195,7 @@ def get_catalog_histogram(catalog, indexid):
 
 ModuleSecurityInfo("pretaweb.plominolib").declarePublic("get_catalog_histogram")
 
+ModuleSecurityInfo('plone.subrequest').declarePublic('subrequest')
+
 def initialize(context):
     """Initializer called when used as a Zope 2 product."""
